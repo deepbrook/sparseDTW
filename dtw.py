@@ -150,7 +150,7 @@ def sparse_dtw(s, q, res=.5):
         hop = next_hop
         warping_path.append(hop)
 
-    return warping_path
+    return warping_path.reverse()
 
 
 
