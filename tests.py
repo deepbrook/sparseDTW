@@ -10,7 +10,7 @@ from unittest import TestCase
 import numpy as np
 # Import Homebrew
 
-from . import dtw
+import dtw
 # Init Logging Facilities
 log = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ class SparseDTWTest(TestCase):
     def test_sparseDTW(self):
         sparsed = dtw.sparse_dtw(self.s, self.q, res=0.5)
         check = [(4, 4), (3, 3), (2, 2), (1, 1), (0, 0)]
-        self.assertTrue(sparsed == check)
+        check.reverse()
+        self.assertTrue(sparsed == (check, 30))
 
 
