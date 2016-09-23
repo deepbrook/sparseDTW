@@ -1,6 +1,8 @@
 """
 Task:
-Descripion of script here.
+The current version isn't actually > SPARSE < - it still uses a fully generated
+numpy array as Warp matrix. Sparse implementation is on the way.
+Until then, this serves as an example as to how SparseDTW works.
 """
 
 # Import Built-Ins
