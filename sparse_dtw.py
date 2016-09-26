@@ -4,7 +4,7 @@ Do fancy shit.
 """
 
 # Import Built-Ins
-
+import argparse
 # Import Third-Party
 import numpy as np
 from scipy.sparse import lil_matrix
@@ -139,10 +139,26 @@ class SparseDTW:
 if __name__ == '__main__':
         s = [3, 4, 5, 3, 3]
         q = [1, 2, 2, 1, 0]
+        parser = argparse.ArgumentParser()
+        parser.add_argument('series', nargs=2,
+                            help=' paths to two time series to time warp')
+        parser.add_argument('--resistance', '-r', required=False, default=0.5,
+                            help='Resistance to use for calculation; defaults to 0.5')
+        args = parser.parse_args()
 
-        dtw = SparseDTW(s, q)
+        a = None
+        b = None
 
-        print(dtw())
+        with open(args.series[0], 'r') as f:
+            a = f.readlines().split('\n')
+
+        with open(args.series[1], 'r') as f:
+            b = f.readlines().split('\n')
+
+        dtw = SparseDTW(a, b, res=args.resistance)
+
+        for coord, value in dtw():
+            print(coord, '\t', value)
 
 
 
