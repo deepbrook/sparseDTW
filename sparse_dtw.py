@@ -4,13 +4,13 @@ Do fancy shit.
 """
 
 # Import Built-Ins
-import logging
-from collections import defaultdict
 
 # Import Third-Party
 import numpy as np
 from scipy.sparse import lil_matrix
+
 # Import Homebrew
+
 
 class SparseDTW:
 
@@ -138,13 +138,13 @@ class SparseDTW:
 
 
 if __name__ == '__main__':
-    s = [3, 4, 5, 3, 3]
-    q = [1, 2, 2, 1, 0]
+        s = [3, 4, 5, 3, 3]
+        q = [1, 2, 2, 1, 0]
 
-    dtw = SparseDTW(s, q)
-    print("--------")
-    print(dtw.as_arr())
-    print("--------")
+        dtw = SparseDTW(s, q)
+        print("--------")
+        print(dtw.as_arr())
+        print("--------")
 
 
 
