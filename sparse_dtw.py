@@ -141,7 +141,7 @@ if __name__ == '__main__':
         q = [1, 2, 2, 1, 0]
         parser = argparse.ArgumentParser()
         parser.add_argument('series', nargs=2,
-                            help=' paths to two time series to time warp')
+                            help=' paths to two time series to time warp; input as file names; files must be single column')
         parser.add_argument('--resistance', '-r', required=False, default=0.5,
                             help='Resistance to use for calculation; defaults to 0.5')
         args = parser.parse_args()
@@ -150,10 +150,12 @@ if __name__ == '__main__':
         b = None
 
         with open(args.series[0], 'r') as f:
-            a = f.readlines().split('\n')
+            a = [np.float64(value)
+                 for value in f.readlines().split('\n').strip(' ')]
 
         with open(args.series[1], 'r') as f:
-            b = f.readlines().split('\n')
+            b = [np.float64(value)
+                 for value in f.readlines().split('\n').strip(' ')]
 
         dtw = SparseDTW(a, b, res=args.resistance)
 
