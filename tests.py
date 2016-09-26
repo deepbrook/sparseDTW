@@ -94,11 +94,13 @@ class SPARSE_TEST(TestCase):
                       [29, 17, 17, 28, 38],
                       [33, 0, 0, 21, 30],
                       [37, 34, 35, 25, 30]])
-        self.assertTrue(np.array_equal(a, b))
+        self.assertTrue(np.array_equal(a, b), msg="Is:\n%s\nShould be:\n%s" % (a,b))
 
-    def test_sparsesparse_dtw(self):
-        sparsed = sparse_dtw.sparse_dtw(self.s, self.q, res=0.5)
-        check = [(4, 4), (3, 3), (2, 2), (1, 1), (0, 0)]
+    def test_calculate_warp_path(self):
+        self.dtw.populate_warp()
+        self.dtw.calculate_warp_costs()
+        sparsed = self.dtw.calculate_warp_path()
+        check = [((4, 4), 30), ((3, 3), 21), ((2, 2), 17), ((1, 1), 8), ((0, 0), 4)]
         check.reverse()
-        self.assertTrue(sparsed == (check, 30))
+        self.assertTrue(sparsed == check, msg=sparsed)
 

@@ -54,8 +54,9 @@ class SparseDTW:
         coords = self.upper_neighbors(x, y)
         if coords:
             for coord in coords:
+                x, y = coord
                 try:
-                    self.SM[coord] = self.euc_distance(*coord)
+                    self.SM[coord] = self.euc_distance(self.s[x], self.q[y])
                 except IndexError:
                     continue
 
@@ -83,13 +84,16 @@ class SparseDTW:
                         self.SM[(i, j)] = euc_d
 
     def calculate_warp_costs(self):
+
         for i in range(self.n):
             for j in range(self.m):
                 if self.SM[i,j]:
-                    lower_n = self.lower_neighbors(i, j)
+                    lower_n = [self.SM[x,y] for x,y in self.lower_neighbors(i, j)
+                               if self.SM[x,y] != 0]
+
 
                     if lower_n:
-                        min_cost = min([self.SM[c] for c in lower_n if self.SM[c] >= 0])
+                        min_cost = min(lower_n)
                         min_cost = 0 if min_cost == -1 else min_cost
                     else:
                         min_cost = 0
@@ -97,7 +101,7 @@ class SparseDTW:
 
                     # check upper neighbors
                     upper_n = self.upper_neighbors(i, j)
-                    if upper_n and not any(self.SM[c] > 0 for c in upper_n):
+                    if upper_n and not any(self.SM[x,y] > 0 for x,y in upper_n):
                         self.unblock_upper_neighbors(i, j)
                     else:
                         continue
@@ -107,7 +111,7 @@ class SparseDTW:
         warping_path = [hop]
         while hop != (0, 0):
 
-            lower_n = self.lower_neighbors(*hop)
+            lower_n = [c for c in self.lower_neighbors(*hop) if self.SM[c] != 0]
             lowest = lower_n[0] if lower_n else (0, 0)
             if len(lower_n) > 1:
                 for next_n in lower_n[1:]:
@@ -118,7 +122,11 @@ class SparseDTW:
             hop = lowest
             warping_path.append(hop)
 
-        return sorted(warping_path), self.SM[warping_path[-1]]
+        warp_path = []
+        for coord in sorted(warping_path):
+            warp_path.append((coord, self.SM[coord]))
+
+        return warp_path
 
     def __call__(self, *args, **kwargs):
         self.populate_warp()
