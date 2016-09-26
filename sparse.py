@@ -91,7 +91,6 @@ class SparseDTW:
                     lower_n = [self.SM[x,y] for x,y in self.lower_neighbors(i, j)
                                if self.SM[x,y] != 0]
 
-
                     if lower_n:
                         min_cost = min(lower_n)
                         min_cost = 0 if min_cost == -1 else min_cost
