@@ -15,7 +15,6 @@ from scipy.sparse import lil_matrix
 class SparseDTW:
 
     def __init__(self, s, q, res=.5):
-        #self.SM = defaultdict(lambda: 0)
 
         self.n, self.m = len(s), len(q)
         self.res = res
@@ -142,9 +141,9 @@ if __name__ == '__main__':
         q = [1, 2, 2, 1, 0]
 
         dtw = SparseDTW(s, q)
-        print("--------")
-        print(dtw.as_arr())
-        print("--------")
+
+        print(dtw())
+
 
 
 
