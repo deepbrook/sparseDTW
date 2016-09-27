@@ -131,7 +131,10 @@ class SparseDTW:
         while hop != (0, 0):
 
             lower_n = [c for c in self.lower_neighbors(*hop) if self.SM[c] != 0]
-            lowest = lower_n[0] if lower_n else (0, 0)
+            lowest = lower_n[0] if lower_n else None
+            if lowest is None:
+                self.SM[hop] = 0
+                warping_path = warping_path[:-1]
             if len(lower_n) > 1:
                 for next_n in lower_n[1:]:
                     lowest = next_n if self.SM[lowest] > self.SM[next_n] else lowest
