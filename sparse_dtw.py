@@ -20,7 +20,7 @@ class SparseDTW:
         self.res = res
         self.s = s
         self.q = q
-        self.SM = lil_matrix((self.n, self.m), dtype=np.int16)
+        self.SM = lil_matrix((self.n, self.m), dtype=np.int64)
 
     def quantize(self, series):
         return [(series[i] - min(series)) / (max(series) - min(series))
@@ -139,6 +139,7 @@ class SparseDTW:
 if __name__ == '__main__':
         s = [3, 4, 5, 3, 3]
         q = [1, 2, 2, 1, 0]
+
         parser = argparse.ArgumentParser()
         parser.add_argument('series', nargs=2,
                             help='paths to two time series to time warp; input '
@@ -155,14 +156,16 @@ if __name__ == '__main__':
         with open(args.series[0], 'r') as f:
             a = []
             for line in f:
-                a.append(np.float64(line.strip('\n').split('\t')[-1]).strip(' '))
+                a.append(np.float64(line.split('\t')[-1]))
 
         with open(args.series[1], 'r') as f:
             b = []
             for line in f:
-                b.append(np.float64(line.strip('\n').split('\t')[-1]).strip(' '))
+                b.append(np.float64(line.split('\t')[-1]))
 
-        dtw = SparseDTW(a, b, res=args.resistance)
+
+
+        dtw = SparseDTW(a, b, res=0.5)
 
         for coord, value in dtw():
             print(coord, '\t', value)
