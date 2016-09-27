@@ -108,7 +108,11 @@ class SparseDTW:
                         min_cost = 0 if min_cost == -1 else min_cost
                     else:
                         min_cost = 0
-                    self.SM[i, j] = self.SM[i, j] + min_cost if self.SM[i, j] != -1 else 0 + min_cost
+
+                    if self.SM[i, j] != -1:
+                        self.SM[i, j] = self.SM[i, j] + min_cost
+                    else:
+                        self.SM[i, j] = min_cost
 
                     # check upper neighbors
                     upper_n = self.upper_neighbors(i, j)
