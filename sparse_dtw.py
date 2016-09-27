@@ -8,11 +8,15 @@ http://arxiv.org/abs/1201.2969
 
 # Import Built-Ins
 import argparse
+import logging
+
 # Import Third-Party
 import numpy as np
 from scipy.sparse import lil_matrix
 
 # Import Homebrew
+
+log = logging.getLogger(__name__)
 
 
 class SparseDTW:
@@ -52,15 +56,18 @@ class SparseDTW:
             return [neighbor for neighbor in (coord_a, coord_b, coord_c)
                     if neighbor is not None]
 
-    def unblock_upper_neighbors(self, x, y):
-        coords = self.upper_neighbors(x, y)
+    def unblock_upper_neighbors(self, i, j):
+        coords = self.upper_neighbors(i, j)
         if coords:
             for coord in coords:
                 x, y = coord
-                try:
-                    self.SM[coord] = self.euc_distance(self.s[x], self.q[y])
-                except IndexError:
-                    continue
+                if self.SM[coord] == 0:
+                    try:
+                        self.SM[coord] = self.euc_distance(self.s[x], self.q[y])
+                    except IndexError:
+                        log.debug("unblock_upper_neighbors(%s, %s): "
+                                  "Error at coord (%s) %s" % (i, j, coord, coords))
+                        raise
 
     def populate_warp(self):
         S = self.quantize(self.s)
