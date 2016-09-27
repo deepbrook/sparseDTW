@@ -56,18 +56,17 @@ class SparseDTW:
             return [neighbor for neighbor in (coord_a, coord_b, coord_c)
                     if neighbor is not None]
 
-    def unblock_upper_neighbors(self, i, j):
-        coords = self.upper_neighbors(i, j)
-        if coords:
-            for coord in coords:
-                x, y = coord
-                if self.SM[coord] == 0:
-                    try:
-                        self.SM[coord] = self.euc_distance(self.s[x], self.q[y])
-                    except IndexError:
-                        log.debug("unblock_upper_neighbors(%s, %s): "
-                                  "Error at coord (%s) %s" % (i, j, coord, coords))
-                        raise
+    def unblock_upper_neighbors(self, neighbors):
+
+        for coord in neighbors:
+            x, y = coord
+            if self.SM[coord] == 0:
+                try:
+                    self.SM[coord] = self.euc_distance(self.s[x], self.q[y])
+                except IndexError:
+                    log.debug("unblock_upper_neighbors(%s, %s): "
+                              "Error at coord (%s) %s" % (i, j, coord, neighbors))
+                    raise
 
     def populate_warp(self):
         S = self.quantize(self.s)
@@ -109,15 +108,20 @@ class SparseDTW:
                     else:
                         min_cost = 0
 
-                    if self.SM[i, j] != -1:
+                    if self.SM[i, j] > -1: # Ignore blocked neighbors ??
                         self.SM[i, j] = self.SM[i, j] + min_cost
-                    else:
+                    elif self.SM[i, j] == 0:
+                        pass
+                    elif self.SM[i, j] == -1:
                         self.SM[i, j] = min_cost if min_cost > 0 else -1
+                    else:
+                        raise ValueError('Unexpected Value in SM! '
+                                         '%s (%s, %s)' % (self.SM[i, j], i, j))
 
                     # check upper neighbors
                     upper_n = self.upper_neighbors(i, j)
                     if upper_n and not any(self.SM[x,y] != 0 for x,y in upper_n):
-                        self.unblock_upper_neighbors(i, j)
+                        self.unblock_upper_neighbors(upper_n)
                     else:
                         continue
 
@@ -154,7 +158,7 @@ class SparseDTW:
 
 
 if __name__ == '__main__':
-
+    if True:
         parser = argparse.ArgumentParser()
         parser.add_argument('series', nargs=2,
                             help='paths to two time series to time warp; input '
@@ -179,9 +183,12 @@ if __name__ == '__main__':
                 b.append(np.float64(line.split('\t')[-1]))
 
         dtw = SparseDTW(a, b, res=args.resistance)
-
-        for coord, value in dtw():
-            print(coord, '\t', value)
+    else:
+        a = [i for i in range(100)]
+        b = [i for i in range(100)]
+        dtw = SparseDTW(a, b)
+    for coord, value in dtw():
+        print(coord, '\t', value)
 
 
 
