@@ -90,7 +90,10 @@ class SparseDTW:
                     if euc_d == 0:
                         self.SM[(i, j)] = -1
                     else:
-                        self.SM[(i, j)] = self.SM[(i, j)] + euc_d if self.SM[i, j] != -1 else 0 + euc_d
+                        if self.SM[i, j] != -1:
+                            self.SM[(i, j)] = self.SM[(i, j)] + euc_d
+                        else:
+                            self.SM[(i, j)] = euc_d
 
     def calculate_warp_costs(self):
 
