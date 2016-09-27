@@ -27,6 +27,8 @@ class SparseDTW:
         self.res = res
         self.s = s
         self.q = q
+        S = self.quantize(self.s)
+        Q = self.quantize(self.q)
         self.SM = lil_matrix((self.n, self.m), dtype=np.float64)
 
     def quantize(self, series):
@@ -62,21 +64,19 @@ class SparseDTW:
             x, y = coord
             if self.SM[coord] == 0:
                 try:
-                    self.SM[coord] = self.euc_distance(self.s[x], self.q[y])
+                    self.SM[coord] = self.euc_distance(self.S[x], self.Q[y])
                 except IndexError:
                     log.debug("unblock_upper_neighbors(%s, %s): "
                               "Error at coord (%s) %s" % (i, j, coord, neighbors))
                     raise
 
     def populate_warp(self):
-        S = self.quantize(self.s)
-        Q = self.quantize(self.q)
 
         lower_bound = 0
         upper_bound = self.res
         while 0 <= lower_bound <= 1 - self.res / 2:
-            idxS = [i for i in range(self.n) if (lower_bound <= S[i] <= upper_bound)]
-            idxQ = [i for i in range(self.m) if (lower_bound <= Q[i] <= upper_bound)]
+            idxS = [i for i in range(self.n) if (lower_bound <= self.S[i] <= upper_bound)]
+            idxQ = [i for i in range(self.m) if (lower_bound <= self.Q[i] <= upper_bound)]
 
             # update bounds
             lower_bound += + self.res / 2
@@ -85,7 +85,7 @@ class SparseDTW:
             # For indices, calculate euclidic distances and add to warp matrix SM
             for i in idxS:
                 for j in idxQ:
-                    euc_d = self.euc_distance(S[i], Q[j])
+                    euc_d = self.euc_distance(self.S[i], self.Q[j])
                     if euc_d == 0:
                         self.SM[(i, j)] = -1
                     else:
