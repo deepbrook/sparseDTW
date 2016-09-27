@@ -20,7 +20,7 @@ class SparseDTW:
         self.res = res
         self.s = s
         self.q = q
-        self.SM = lil_matrix((self.n, self.m), dtype=np.int64)
+        self.SM = lil_matrix((self.n, self.m), dtype=np.float64)
 
     def quantize(self, series):
         return [(series[i] - min(series)) / (max(series) - min(series))
@@ -76,11 +76,11 @@ class SparseDTW:
             # For indices, calculate euclidic distances and add to warp matrix SM
             for i in idxS:
                 for j in idxQ:
-                    euc_d = self.euc_distance(self.s[i], self.q[j])
+                    euc_d = self.euc_distance(S[i], Q[j])
                     if euc_d == 0:
                         self.SM[(i, j)] = -1
                     else:
-                        self.SM[(i, j)] = euc_d
+                        self.SM[(i, j)] += euc_d
 
     def calculate_warp_costs(self):
 
@@ -99,7 +99,7 @@ class SparseDTW:
 
                     # check upper neighbors
                     upper_n = self.upper_neighbors(i, j)
-                    if upper_n and not any(self.SM[x,y] > 0 for x,y in upper_n):
+                    if upper_n and not any(self.SM[x,y] != 0 for x,y in upper_n):
                         self.unblock_upper_neighbors(i, j)
                     else:
                         continue
@@ -137,8 +137,6 @@ class SparseDTW:
 
 
 if __name__ == '__main__':
-        s = [3, 4, 5, 3, 3]
-        q = [1, 2, 2, 1, 0]
 
         parser = argparse.ArgumentParser()
         parser.add_argument('series', nargs=2,
@@ -163,9 +161,7 @@ if __name__ == '__main__':
             for line in f:
                 b.append(np.float64(line.split('\t')[-1]))
 
-
-
-        dtw = SparseDTW(a, b, res=0.5)
+        dtw = SparseDTW(a, b, res=args.resistance)
 
         for coord, value in dtw():
             print(coord, '\t', value)
