@@ -45,7 +45,7 @@ class SparseDTW:
             coord_a = (x-1, y) if x-1 >= 0 and y >= 0 else None
             coord_b = (x-1, y-1) if x-1 >= 0 and y-1 >= 0 else None
             coord_c = (x, y-1)if x >= 0 and y-1 >= 0 else None
-            return [neighbor for neighbor in (coord_a, coord_b, coord_c)
+            return [neighbor for neighbor in (coord_b, coord_a, coord_c)
                     if neighbor is not None]
 
     def upper_neighbors(self, x, y):
@@ -55,7 +55,7 @@ class SparseDTW:
             coord_a = (x+1, y) if x+1 < self.n and y < self.m else None
             coord_b = (x+1, y+1) if x+1 < self.n and y+1 < self.m else None
             coord_c = (x, y+1) if x < self.n and y+1 < self.m else None
-            return [neighbor for neighbor in (coord_a, coord_b, coord_c)
+            return [neighbor for neighbor in (coord_b, coord_a, coord_c)
                     if neighbor is not None]
 
     def unblock_upper_neighbors(self, neighbors):
