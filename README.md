@@ -7,7 +7,4 @@ http://arxiv.org/abs/1201.2969
 It's usable as a cli tool, by feeding it 2 file paths and an optional
 resistance parameter. 
 
-Uses `scipy.sparse.lil_matrix`.
-
-To do:
-custom c implementation of sparse matrix
+Uses `scipy.sparse.lil_matrix` and implemented simple backtracking.
